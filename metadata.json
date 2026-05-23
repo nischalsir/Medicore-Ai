@@ -1,0 +1,6 @@
+{
+  "name": "MediTrack AI",
+  "description": "Production-ready native Android mobile health and medicine reminder application featuring Supabase integration for auth, storage, and database.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
