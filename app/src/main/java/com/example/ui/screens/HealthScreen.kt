@@ -172,37 +172,54 @@ fun HealthLogCard(log: HealthLog, onDelete: () -> Unit) {
                 Spacer(modifier = Modifier.height(4.dp))
                 
                 val obj = runCatching { log.value.jsonObject }.getOrNull()
+                
+                fun getVal(key: String): String {
+                    return runCatching {
+                        val element = obj?.get(key) ?: return ""
+                        if (element is kotlinx.serialization.json.JsonPrimitive && element !is kotlinx.serialization.json.JsonNull) {
+                            return element.content
+                        }
+                        return ""
+                    }.getOrDefault("")
+                }
+
                 when (log.metric) {
                     "blood_pressure" -> {
-                        val sys = obj?.get("systolic")?.jsonPrimitive?.content
-                        val dia = obj?.get("diastolic")?.jsonPrimitive?.content
+                        val sys = getVal("systolic")
+                        val dia = getVal("diastolic")
                         Text("$sys / $dia mmHg", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "sugar" -> {
-                        val v = obj?.get("level")?.jsonPrimitive?.content
-                        val t = obj?.get("type")?.jsonPrimitive?.content ?: "Fasting"
+                        val v = getVal("level")
+                        var t = getVal("type")
+                        if (t.isBlank()) t = "Fasting"
                         Text("$v mg/dL ($t)", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "temperature" -> {
-                        val v = obj?.get("temperature")?.jsonPrimitive?.content
+                        val v = getVal("temperature")
                         Text("$v °C", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "heart_rate" -> {
-                        val v = obj?.get("rate")?.jsonPrimitive?.content
+                        val v = getVal("rate")
                         Text("$v bpm", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "weight" -> {
-                        val v = obj?.get("weight")?.jsonPrimitive?.content
+                        val v = getVal("weight")
                         Text("$v kg", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     else -> {
-                        val v = obj?.get("value")?.jsonPrimitive?.content ?: runCatching { log.value.jsonPrimitive.content }.getOrNull()
-                        Text("$v", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
+                        val v = getVal("value").ifBlank { 
+                            runCatching { 
+                                val prim = log.value as? kotlinx.serialization.json.JsonPrimitive
+                                if (prim != null && prim !is kotlinx.serialization.json.JsonNull) prim.content else "" 
+                            }.getOrDefault("") 
+                        }
+                        Text(v, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
 
-                val notes = obj?.get("notes")?.jsonPrimitive?.content
-                if (!notes.isNullOrBlank()) {
+                val notes = getVal("notes")
+                if (notes.isNotBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text("Notes: $notes", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
