@@ -171,37 +171,37 @@ fun HealthLogCard(log: HealthLog, onDelete: () -> Unit) {
                 
                 Spacer(modifier = Modifier.height(4.dp))
                 
-                val obj = log.value.jsonObject
+                val obj = runCatching { log.value.jsonObject }.getOrNull()
                 when (log.metric) {
                     "blood_pressure" -> {
-                        val sys = obj["systolic"]?.jsonPrimitive?.content
-                        val dia = obj["diastolic"]?.jsonPrimitive?.content
+                        val sys = obj?.get("systolic")?.jsonPrimitive?.content
+                        val dia = obj?.get("diastolic")?.jsonPrimitive?.content
                         Text("$sys / $dia mmHg", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "sugar" -> {
-                        val v = obj["level"]?.jsonPrimitive?.content
-                        val t = obj["type"]?.jsonPrimitive?.content ?: "Fasting"
+                        val v = obj?.get("level")?.jsonPrimitive?.content
+                        val t = obj?.get("type")?.jsonPrimitive?.content ?: "Fasting"
                         Text("$v mg/dL ($t)", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "temperature" -> {
-                        val v = obj["temperature"]?.jsonPrimitive?.content
+                        val v = obj?.get("temperature")?.jsonPrimitive?.content
                         Text("$v °C", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "heart_rate" -> {
-                        val v = obj["rate"]?.jsonPrimitive?.content
+                        val v = obj?.get("rate")?.jsonPrimitive?.content
                         Text("$v bpm", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     "weight" -> {
-                        val v = obj["weight"]?.jsonPrimitive?.content
+                        val v = obj?.get("weight")?.jsonPrimitive?.content
                         Text("$v kg", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                     else -> {
-                        val v = obj["value"]?.jsonPrimitive?.content
+                        val v = obj?.get("value")?.jsonPrimitive?.content ?: runCatching { log.value.jsonPrimitive.content }.getOrNull()
                         Text("$v", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
 
-                val notes = obj["notes"]?.jsonPrimitive?.content
+                val notes = obj?.get("notes")?.jsonPrimitive?.content
                 if (!notes.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text("Notes: $notes", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

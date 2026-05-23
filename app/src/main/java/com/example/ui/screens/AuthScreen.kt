@@ -3,6 +3,9 @@ package com.example.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +27,7 @@ fun AuthScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
     var fullName by remember { mutableStateOf("") }
     var isRegistering by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
@@ -83,7 +87,14 @@ fun AuthScreen(
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Password") },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisible) androidx.compose.ui.text.input.VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        val icon = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                        val description = if (passwordVisible) "Hide password" else "Show password"
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(imageVector = icon, contentDescription = description)
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier.fillMaxWidth(),
                      colors = TextFieldDefaults.colors(

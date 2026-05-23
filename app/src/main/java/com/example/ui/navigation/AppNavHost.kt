@@ -14,6 +14,7 @@ import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.HealthScreen
 import com.example.ui.screens.ReportsScreen
 import com.example.ui.screens.SplashScreen
+import com.example.ui.screens.AiChatScreen
 import com.example.ui.components.MainLayout
 import kotlinx.serialization.Serializable
 
@@ -40,6 +41,9 @@ object HealthRoute
 
 @Serializable
 object ReportsRoute
+
+@Serializable
+object AiChatRoute
 
 @Composable
 fun AppNavHost(
@@ -108,6 +112,9 @@ fun AppNavHost(
                         }
                     }
                 )
+            }
+            composable<AiChatRoute> {
+                AiChatScreen()
             }
         }
     }

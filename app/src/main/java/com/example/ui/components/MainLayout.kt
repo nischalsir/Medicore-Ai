@@ -23,12 +23,14 @@ import com.example.ui.navigation.MedicinesRoute
 import com.example.ui.navigation.HealthRoute
 import com.example.ui.navigation.ReportsRoute
 import com.example.ui.navigation.ProfileRoute
+import com.example.ui.navigation.AiChatRoute
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
@@ -57,6 +59,7 @@ fun MainLayout(
             currentRoute?.contains("MedicinesRoute") == true ||
             currentRoute?.contains("HealthRoute") == true ||
             currentRoute?.contains("ReportsRoute") == true ||
+            currentRoute?.contains("AiChatRoute") == true ||
             currentRoute?.contains("ProfileRoute") == true
 
     Box(modifier = Modifier.fillMaxSize().background(
@@ -130,6 +133,19 @@ fun MainLayout(
                         selected = currentDestination?.hierarchy?.any { it.route?.contains("ReportsRoute") == true } == true,
                         onClick = {
                             navController.navigate(ReportsRoute) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        colors = navColors
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Filled.Chat, contentDescription = "AI Chat") },
+                        label = { Text("AI Chat") },
+                        selected = currentDestination?.hierarchy?.any { it.route?.contains("AiChatRoute") == true } == true,
+                        onClick = {
+                            navController.navigate(AiChatRoute) {
                                 popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                 launchSingleTop = true
                                 restoreState = true
