@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -29,9 +30,18 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import com.example.ui.theme.PrimaryAccentLight
+import com.example.ui.theme.SplashColor
+import com.example.ui.theme.BackgroundDark
 
 @Composable
 fun MainLayout(
@@ -49,14 +59,32 @@ fun MainLayout(
             currentRoute?.contains("ReportsRoute") == true ||
             currentRoute?.contains("ProfileRoute") == true
 
-    Scaffold(
-        bottomBar = {
-            if (isBottomBarVisible) {
-                NavigationBar(
-                    containerColor = SurfaceCard,
-                    contentColor = Color.White,
-                    modifier = Modifier.padding(16.dp).clip(RoundedCornerShape(32.dp))
-                ) {
+    Box(modifier = Modifier.fillMaxSize().background(
+        brush = Brush.verticalGradient(
+            colors = listOf(
+                BackgroundDark,
+                Color(0xFF1E1B4B), // indigo-950
+                Color(0xFF0F172A)
+            )
+        )
+    )) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            bottomBar = {
+                if (isBottomBarVisible) {
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        tonalElevation = 0.dp,
+                        modifier = Modifier.clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                    ) {
+                    val navColors = NavigationBarItemDefaults.colors(
+                        indicatorColor = Color.Transparent,
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
                         label = { Text("Home") },
@@ -68,7 +96,7 @@ fun MainLayout(
                                 restoreState = true
                             }
                         },
-                        colors = NavigationBarItemDefaults.colors(indicatorColor = PrimaryAccent, selectedIconColor = Color.White)
+                        colors = navColors
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.List, contentDescription = "Meds") },
@@ -81,7 +109,7 @@ fun MainLayout(
                                 restoreState = true
                             }
                         },
-                        colors = NavigationBarItemDefaults.colors(indicatorColor = PrimaryAccent, selectedIconColor = Color.White)
+                        colors = navColors
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Favorite, contentDescription = "Health") },
@@ -94,7 +122,7 @@ fun MainLayout(
                                 restoreState = true
                             }
                         },
-                        colors = NavigationBarItemDefaults.colors(indicatorColor = PrimaryAccent, selectedIconColor = Color.White)
+                        colors = navColors
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Star, contentDescription = "Reports") },
@@ -107,7 +135,7 @@ fun MainLayout(
                                 restoreState = true
                             }
                         },
-                        colors = NavigationBarItemDefaults.colors(indicatorColor = PrimaryAccent, selectedIconColor = Color.White)
+                        colors = navColors
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
@@ -120,12 +148,13 @@ fun MainLayout(
                                 restoreState = true
                             }
                         },
-                        colors = NavigationBarItemDefaults.colors(indicatorColor = PrimaryAccent, selectedIconColor = Color.White)
+                        colors = navColors
                     )
-                }
-            }
-        }
+                } // ends NavigationBar
+            } // ends if
+        } // ends bottomBar lambda
     ) { paddingValues ->
-        content(Modifier.padding(paddingValues))
+        content(Modifier.padding(paddingValues).consumeWindowInsets(paddingValues))
     }
+    } // ends Box
 }

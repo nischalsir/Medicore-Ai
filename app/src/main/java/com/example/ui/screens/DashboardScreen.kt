@@ -58,9 +58,9 @@ fun DashboardScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { 
-                    Column {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("MEDITRACK AI", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold, letterSpacing = 1.5.sp)
                         Text("Hello, $userName", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                     }
@@ -119,7 +119,7 @@ fun DashboardScreen(
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
                     titleContentColor = MaterialTheme.colorScheme.onBackground
                 )

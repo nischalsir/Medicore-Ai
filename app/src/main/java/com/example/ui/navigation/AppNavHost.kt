@@ -13,8 +13,12 @@ import com.example.ui.screens.AddMedicineScreen
 import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.HealthScreen
 import com.example.ui.screens.ReportsScreen
+import com.example.ui.screens.SplashScreen
 import com.example.ui.components.MainLayout
 import kotlinx.serialization.Serializable
+
+@Serializable
+object SplashRoute
 
 @Serializable
 object AuthRoute
@@ -45,9 +49,23 @@ fun AppNavHost(
     MainLayout(navController = navController) { innerModifier ->
         NavHost(
             navController = navController,
-            startDestination = AuthRoute,
+            startDestination = SplashRoute,
             modifier = modifier.then(innerModifier)
         ) {
+            composable<SplashRoute> {
+                SplashScreen(
+                    onNavigateToAuth = {
+                        navController.navigate(AuthRoute) {
+                            popUpTo(SplashRoute) { inclusive = true }
+                        }
+                    },
+                    onNavigateToDashboard = {
+                        navController.navigate(DashboardRoute) {
+                            popUpTo(SplashRoute) { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable<AuthRoute> {
                 AuthScreen(
                     onNavigateToDashboard = {

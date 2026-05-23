@@ -40,6 +40,10 @@ class SupabaseRepository {
         client.auth.signOut()
     }
 
+    suspend fun awaitInitialization() {
+        client.auth.awaitInitialization()
+    }
+
     fun getCurrentUserId(): String? = client.auth.currentUserOrNull()?.id
     
     fun getCurrentUserEmail(): String? = client.auth.currentUserOrNull()?.email

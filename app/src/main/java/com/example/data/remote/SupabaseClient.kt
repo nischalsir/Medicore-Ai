@@ -18,10 +18,7 @@ object SupabaseNetwork {
             supabaseUrl = BuildConfig.SUPABASE_URL,
             supabaseKey = BuildConfig.SUPABASE_ANON_KEY
         ) {
-            install(Auth) {
-                sessionManager = MemorySessionManager()
-                codeVerifierCache = MemoryCodeVerifierCache()
-            }
+            install(Auth)
             install(Postgrest)
             install(Storage)
         }

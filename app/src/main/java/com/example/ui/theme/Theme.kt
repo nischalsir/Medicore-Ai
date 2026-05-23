@@ -15,7 +15,7 @@ private val DarkColorScheme =
   darkColorScheme(
     primary = PrimaryAccentLight,
     secondary = SplashColor,
-    background = BackgroundDark,
+    background = Color.Transparent,
     surface = SurfaceDark,
     surfaceVariant = SurfaceCard,
     onPrimary = Color.White,

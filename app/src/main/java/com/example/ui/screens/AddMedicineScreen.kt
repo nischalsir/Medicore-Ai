@@ -3,7 +3,6 @@ package com.example.ui.screens
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,12 +20,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import coil.compose.AsyncImage
 import com.example.data.repository.SupabaseRepository
 import com.example.domain.model.Medicine
 import com.example.ui.components.GlassCard
+import com.example.workers.MedicineWorker
 import kotlinx.coroutines.launch
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,14 +58,14 @@ fun AddMedicineScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Add Medicine", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -184,6 +188,18 @@ fun AddMedicineScreen(
                             )
                             try {
                                 repository.addMedicine(med)
+                                
+                                // Schedule a mock notification for 10 seconds later
+                                val inputData = Data.Builder()
+                                    .putString("medicine_name", name)
+                                    .putString("dosage", dosage)
+                                    .build()
+                                val workRequest = OneTimeWorkRequestBuilder<MedicineWorker>()
+                                    .setInitialDelay(2, TimeUnit.MINUTES) // changed from 10s to 2 mins for demo
+                                    .setInputData(inputData)
+                                    .build()
+                                WorkManager.getInstance(context).enqueue(workRequest)
+                                
                                 onNavigateBack()
                             } catch (e: Exception) {
                                 e.printStackTrace()

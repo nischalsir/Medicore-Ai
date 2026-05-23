@@ -28,121 +28,110 @@ fun AuthScreen(
     var isRegistering by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    
-    // Check if user already logged in
-    LaunchedEffect(Unit) {
-        try {
-            if (repository.getCurrentUserId() != null) {
-                onNavigateToDashboard()
-            }
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            errorMessage = e.message ?: "Failed to initialize"
-        }
-    }
+
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = if (isRegistering) "Create Account" else "Welcome Back",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            
-            Text(
-                text = "MediTrack AI",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            if (isRegistering) {
-                OutlinedTextField(
-                    value = fullName,
-                    onValueChange = { fullName = it },
-                    label = { Text("Full Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                    )
-                )
-            }
-
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth(),
-                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
-                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-
-            if (errorMessage != null) {
-                Text(text = errorMessage!!, color = MaterialTheme.colorScheme.error)
-            }
-
-            Button(
-                onClick = {
-                    coroutineScope.launch {
-                        isLoading = true
-                        errorMessage = null
-                        try {
-                            if (isRegistering) {
-                                repository.register(email, password, fullName)
-                                // Login automatically or wait
-                                repository.login(email, password)
-                            } else {
-                                repository.login(email, password)
-                            }
-                            onNavigateToDashboard()
-                        } catch (e: Exception) {
-                            errorMessage = e.message ?: "Authentication failed"
-                        } finally {
-                            isLoading = false
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                enabled = !isLoading && email.isNotBlank() && password.isNotBlank() && (!isRegistering || fullName.isNotBlank())
+        com.example.ui.components.GlassCard(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(24.dp)
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
-                } else {
-                    Text(if (isRegistering) "Register" else "Login")
-                }
-            }
-
-            TextButton(onClick = { isRegistering = !isRegistering }) {
                 Text(
-                    text = if (isRegistering) "Already have an account? Login" else "New here? Register",
+                    text = if (isRegistering) "Create Account" else "Welcome Back",
+                    style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
+                
+                Text(
+                    text = "MediTrack AI",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                if (isRegistering) {
+                    OutlinedTextField(
+                        value = fullName,
+                        onValueChange = { fullName = it },
+                        label = { Text("Full Name") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha=0.5f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha=0.5f)
+                        )
+                    )
+                }
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    modifier = Modifier.fillMaxWidth(),
+                     colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha=0.5f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha=0.5f)
+                    )
+                )
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    modifier = Modifier.fillMaxWidth(),
+                     colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha=0.5f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha=0.5f)
+                    )
+                )
+
+                if (errorMessage != null) {
+                    Text(text = errorMessage!!, color = MaterialTheme.colorScheme.error)
+                }
+
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            isLoading = true
+                            errorMessage = null
+                            try {
+                                if (isRegistering) {
+                                    repository.register(email, password, fullName)
+                                    repository.login(email, password)
+                                } else {
+                                    repository.login(email, password)
+                                }
+                                onNavigateToDashboard()
+                            } catch (e: Exception) {
+                                errorMessage = e.message ?: "Authentication failed"
+                            } finally {
+                                isLoading = false
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    enabled = !isLoading && email.isNotBlank() && password.isNotBlank() && (!isRegistering || fullName.isNotBlank())
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+                    } else {
+                        Text(if (isRegistering) "Register" else "Login")
+                    }
+                }
+
+                TextButton(onClick = { isRegistering = !isRegistering }) {
+                    Text(
+                        text = if (isRegistering) "Already have an account? Login" else "New here? Register",
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
